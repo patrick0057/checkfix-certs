@@ -25,11 +25,7 @@ while getopts "hy" opt; do
         ;;
     esac
 done
-#shift $((OPTIND -1))
-#if [[ -z "$task" ]] && [ -z "$clusterid" ]; then
-#    helpmenu
-#    exit 1
-#fi
+
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root"
     exit 1
@@ -52,9 +48,6 @@ if ! hash kubectl 2>/dev/null; then
         echo "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
         echo "chmod +x ./kubectl"
         echo "mv ./kubectl /bin/kubectl"
-        echo "!!!"
-        echo "Mac users:"
-        echo "brew install kubernetes-cli"
         exit 1
     fi
 fi
@@ -70,10 +63,6 @@ if ! hash jq 2>/dev/null; then
         echo "curl -L -O https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64"
         echo "chmod +x jq-linux64"
         echo "mv jq-linux64 /bin/jq"
-        echo "!!!"
-        echo "Mac users:"
-        echo "brew install jq"
-        echo "brew link jq"
         exit 1
     fi
 fi
@@ -87,22 +76,6 @@ if ! hash base64 2>/dev/null; then
     echo 'Sorry no auto install for this one, please use your package manager.'
     exit 1
 fi
-function yesno() {
-    shopt -s nocasematch
-    response=''
-    i=0
-    while [[ ${response} != 'y' ]] && [[ ${response} != 'n' ]]; do
-        i=$((i + 1))
-        if [ $i -gt 10 ]; then
-            echo "Script is destined to loop forever, aborting!  Make sure your docker run command has -ti then try again."
-            exit 1
-        fi
-        printf '(y/n): '
-        read -n1 response
-        echo
-    done
-    shopt -u nocasematch
-}
 
 SSLDIRPREFIX=$(docker inspect kubelet --format '{{ range .Mounts }}{{ if eq .Destination "/etc/kubernetes" }}{{ .Source }}{{ end }}{{ end }}')
 if [ "$?" != "0" ]; then
