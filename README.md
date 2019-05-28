@@ -9,7 +9,7 @@ kube-apiserver-requestheader-ca-key.pem
 kube-apiserver-requestheader-ca.pem
 ```
 ### Usage
-Option -y will automatically install missing dependencies on linux systems.
+Option -y will automatically install missing dependencies on linux systems.  Run this script on your Rancher controlplane nodes.
 ```bash
 ./checkfix-certs.sh -y
 ```
